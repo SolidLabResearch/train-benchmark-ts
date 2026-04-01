@@ -1,19 +1,12 @@
 import type { Bindings } from '@incremunica/incremental-types';
 import { Quad } from '@incremunica/incremental-types';
-import { DataFactory, NamedNode } from 'n3';
-import {
-  BASE_PREFIX,
-  LENGTH,
-  MONITORED_BY,
-  RDF,
-  SEGMENT,
-  TRACKELEMENT,
-} from '../../BenchmarkTerms';
+import { NamedNode } from 'n3';
+import { BASE_PREFIX, CONNECTS_TO, RDF, SWITCH } from '../../BenchmarkTerms';
 import type { Driver } from '../../Driver';
 import type { BenchmarkConfig } from '../../Types';
 import { TransformationOperation } from '../TransformationOperation';
 
-export class InjectSegmentForSensor extends TransformationOperation {
+export class InjectChain extends TransformationOperation {
   public constructor(driver: Driver, config: BenchmarkConfig) {
     super(
       driver,
@@ -22,47 +15,38 @@ export class InjectSegmentForSensor extends TransformationOperation {
 PREFIX base: <http://www.semanticweb.org/ontologies/2015/trainbenchmark#>
 PREFIX rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
 
-SELECT ?sensor
-WHERE
-{
-  ?sensor a base:Sensor .
+SELECT ?switch ?trackElement
+WHERE {
+    ?switch base:connectsTo ?trackElement .
+    ?switch a base:Switch .
 }
 `,
-      'inject star',
+      'inject chain',
     );
   }
 
   protected _transform(bindings: Bindings): void {
-    const id = this.driver.generateNewVertexId();
-    const segment = new NamedNode(`${BASE_PREFIX}_${id}`);
-    const sensor = this.getSafe(bindings, 'sensor');
+    const newSwitch = new NamedNode(`${BASE_PREFIX}_${this.driver.generateNewVertexId()}`);
+
+    const switchElement = this.getSafe(bindings, 'switch');
+    const trackElement = this.getSafe(bindings, 'trackElement');
 
     this.driver.streamingStore.addQuad(new Quad(
-      segment,
+      newSwitch,
       RDF.type,
-      TRACKELEMENT,
-      undefined,
+      SWITCH,
     ));
 
     this.driver.streamingStore.addQuad(new Quad(
-      segment,
-      RDF.type,
-      SEGMENT,
-      undefined,
+      switchElement,
+      CONNECTS_TO,
+      newSwitch,
     ));
 
     this.driver.streamingStore.addQuad(new Quad(
-      segment,
-      LENGTH,
-      DataFactory.literal(0),
-      undefined,
-    ));
-
-    this.driver.streamingStore.addQuad(new Quad(
-      segment,
-      MONITORED_BY,
-      sensor,
-      undefined,
+      newSwitch,
+      CONNECTS_TO,
+      trackElement,
     ));
   }
 }

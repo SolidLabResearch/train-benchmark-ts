@@ -7,19 +7,26 @@ import { BatchRouteSensor } from './batch/BatchRouteSensor';
 import { BatchSemaphoreNeighbor } from './batch/BatchSemaphoreNeighbor';
 import { BatchSwitchMonitored } from './batch/BatchSwitchMonitored';
 import { BatchSwitchSet } from './batch/BatchSwitchSet';
+import { InjectCartesian } from './inject/InjectCartesian';
+import { InjectChain } from './inject/InjectChain';
+import { InjectCompleteStar } from './inject/InjectCompleteStar';
 import { InjectConnectedSegments } from './inject/InjectConnectedSegments';
+import { InjectConnectedSegmentsFull } from './inject/InjectConnectedSegmentsFull';
 import { InjectPosLength } from './inject/InjectPosLength';
 import { InjectRouteSensor } from './inject/InjectRouteSensor';
-import { InjectSegmentForSensor } from './inject/InjectSegmentForSensor';
 import { InjectSemaphoreNeighbor } from './inject/InjectSemaphoreNeighbor';
+import { InjectStar } from './inject/InjectStar';
 import { InjectSwitchMonitored } from './inject/InjectSwitchMonitored';
 import { InjectSwitchSet } from './inject/InjectSwitchSet';
 import type { Operation } from './Operation';
+import { RepairCartesian } from './repair/RepairCartesian';
+import { RepairChain } from './repair/RepairChain';
+import { RepairCompleteStar } from './repair/RepairCompleteStar';
 import { RepairConnectedSegments } from './repair/RepairConnectedSegments';
 import { RepairPosLength } from './repair/RepairPosLength';
 import { RepairRouteSensor } from './repair/RepairRouteSensor';
-import { RepairSegmentForSensor } from './repair/RepairSegmentForSensor';
 import { RepairSemaphoreNeighbor } from './repair/RepairSemaphoreNeighbor';
+import { RepairStar } from './repair/RepairStar';
 import { RepairSwitchMonitored } from './repair/RepairSwitchMonitored';
 import { RepairSwitchSet } from './repair/RepairSwitchSet';
 
@@ -54,15 +61,17 @@ export const OperationFactory = {
       case 'BatchChain': {
         let queryString = 'PREFIX base: <http://www.semanticweb.org/ontologies/2015/trainbenchmark#>\n';
         queryString += 'PREFIX rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\n\n';
-        queryString += 'SELECT ';
+        queryString += 'SELECT ?switch ';
 
-        for (let i = 1; i <= size + 1; i++) {
+        for (let i = 1; i < size; i++) {
           queryString += `?segment${i} `;
         }
 
         queryString += 'WHERE\n{\n';
+        queryString += `?switch a base:Switch .\n`;
+        queryString += `?switch base:connectsTo ?segment1 .\n`;
 
-        for (let i = 1; i <= size; i++) {
+        for (let i = 1; i < size - 1; i++) {
           queryString += `?segment${i} base:connectsTo ?segment${i + 1} .\n`;
         }
 
@@ -76,32 +85,143 @@ export const OperationFactory = {
         );
       }
       case 'BatchStar': {
-        let queryString = 'PREFIX base: <http://www.semanticweb.org/ontologies/2015/trainbenchmark#>\n';
-        queryString += 'PREFIX rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\n\n';
-        queryString += 'SELECT ?sensor ';
+        let queryStringSelect = 'PREFIX base: <http://www.semanticweb.org/ontologies/2015/trainbenchmark#>\n';
+        queryStringSelect += 'PREFIX rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\n\n';
+        queryStringSelect += 'SELECT ?switch ';
+        let queryStringBody = 'WHERE\n{\n';
 
-        for (let i = 1; i <= size; i++) {
-          queryString += `?trackElement${i} `;
+        queryStringBody += '?switch a base:Switch .\n';
+
+        if (size === 0) {
+          throw new Error('Star size not supported');
+        }
+        if (size >= 2) {
+          queryStringSelect += '?sensor ';
+          queryStringBody += `?switch base:monitoredBy ?sensor .\n`;
+        }
+        if (size >= 3) {
+          queryStringBody += '?switch a base:TrackElement .\n';
+        }
+        if (size >= 4) {
+          queryStringSelect += '?region ';
+          queryStringBody += `?region base:elements ?switch .\n`;
+        }
+        if (size >= 5) {
+          queryStringSelect += '?position ';
+          queryStringBody += `?switch base:currentPosition ?position .\n`;
+        }
+        if (size >= 6) {
+          queryStringSelect += '?trackElementBefore ';
+          queryStringBody += `?trackElementBefore base:connectsTo ?switch .\n`;
+        }
+        if (size >= 7) {
+          queryStringSelect += '?trackElementAfter ';
+          queryStringBody += `?switch base:connectsTo ?trackElementAfter .\n`;
+        }
+        if (size >= 8) {
+          queryStringSelect += '?switchPosition ';
+          queryStringBody += `?switchPosition base:target ?switch .\n`;
+        }
+        if (size >= 9) {
+          throw new Error('Star size not supported');
         }
 
-        queryString += 'WHERE\n{\n';
-
-        for (let i = 1; i <= size; i++) {
-          queryString += `?trackElement${i} base:monitoredBy ?sensor .\n`;
-        }
-
-        queryString += `}`;
+        queryStringBody += `\n}`;
 
         return new BatchOperation(
           driver,
           config,
-          queryString,
+          queryStringSelect + queryStringBody,
           `batch star ${size}`,
+        );
+      }
+      case 'BatchStarLast': {
+        let queryStringSelect = 'PREFIX base: <http://www.semanticweb.org/ontologies/2015/trainbenchmark#>\n';
+        queryStringSelect += 'PREFIX rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\n\n';
+        queryStringSelect += 'SELECT ?switch ';
+        let queryStringBody = 'WHERE\n{\n';
+
+        queryStringBody += '?switch a base:Switch .\n';
+
+        if (size === 0 || size === 1) {
+          throw new Error('Star size not supported');
+        }
+        if (size >= 3) {
+          queryStringBody += '?switch a base:TrackElement .\n';
+        }
+        if (size >= 4) {
+          queryStringSelect += '?region ';
+          queryStringBody += `?region base:elements ?switch .\n`;
+        }
+        if (size >= 5) {
+          queryStringSelect += '?position ';
+          queryStringBody += `?switch base:currentPosition ?position .\n`;
+        }
+        if (size >= 6) {
+          queryStringSelect += '?trackElementBefore ';
+          queryStringBody += `?trackElementBefore base:connectsTo ?switch .\n`;
+        }
+        if (size >= 7) {
+          queryStringSelect += '?trackElementAfter ';
+          queryStringBody += `?switch base:connectsTo ?trackElementAfter .\n`;
+        }
+        if (size >= 8) {
+          queryStringSelect += '?switchPosition ';
+          queryStringBody += `?switchPosition base:target ?switch .\n`;
+        }
+        if (size >= 9) {
+          throw new Error('Star size not supported');
+        }
+        queryStringSelect += '?sensor ';
+        queryStringBody += `?switch base:monitoredBy ?sensor .\n`;
+
+        queryStringBody += `\n}`;
+
+        return new BatchOperation(
+          driver,
+          config,
+          queryStringSelect + queryStringBody,
+          `batch star ${size}`,
+        );
+      }
+      case 'BatchCartesian': {
+        let queryStringSelect = 'PREFIX base: <http://www.semanticweb.org/ontologies/2015/trainbenchmark#>\n';
+        queryStringSelect += 'PREFIX rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\n\n';
+        queryStringSelect += 'SELECT ?switch ?position ';
+        let queryStringBody = 'WHERE\n{\n';
+
+        queryStringBody += `?switch base:currentPosition ?position .\n`;
+        if (size === 0) {
+          throw new Error('Star size not supported');
+        }
+        if (size >= 2) {
+          queryStringSelect += `?route1 ?active `;
+          queryStringBody += `?route1 base:active ?active .\n`;
+        }
+        if (size >= 3) {
+          queryStringSelect += `?route2 ?entry `;
+          queryStringBody += '?route2 base:entry ?entry .\n';
+        }
+        if (size >= 4) {
+          queryStringSelect += `?route3 ?exit `;
+          queryStringBody += '?route3 base:exit ?exit .\n';
+        }
+
+        queryStringBody += `\n}`;
+
+        return new BatchOperation(
+          driver,
+          config,
+          queryStringSelect + queryStringBody,
+          `batch cartesian ${size}`,
         );
       }
       // Inject
       case 'InjectConnectedSegments': {
         return new InjectConnectedSegments(driver, config);
+      }
+      case 'InjectConnectedSegmentsFull': {
+        return new InjectConnectedSegmentsFull(driver, config);
       }
       case 'InjectPosLength': {
         return new InjectPosLength(driver, config);
@@ -119,10 +239,19 @@ export const OperationFactory = {
         return new InjectSwitchSet(driver, config);
       }
       case 'InjectChain': {
-        return new InjectConnectedSegments(driver, config);
+        // Return new InjectConnectedSegments(driver, config);
+        return new InjectChain(driver, config);
       }
       case 'InjectStar': {
-        return new InjectSegmentForSensor(driver, config);
+        // Return new InjectConnectedSegmentsFull(driver, config);
+        return new InjectStar(driver, config);
+      }
+      case 'InjectCompleteStar': {
+        return new InjectCompleteStar(driver, config);
+      }
+      case 'InjectCartesian': {
+        // Return new InjectSwitchSet(driver, config);
+        return new InjectCartesian(driver, config);
       }
       // Repair
       case 'RepairConnectedSegments': {
@@ -144,10 +273,19 @@ export const OperationFactory = {
         return new RepairSwitchSet(driver, config);
       }
       case 'RepairChain': {
-        return new RepairConnectedSegments(driver, config);
+        // Return new RepairConnectedSegments(driver, config);
+        return new RepairChain(driver, config);
       }
       case 'RepairStar': {
-        return new RepairSegmentForSensor(driver, config);
+        // Return new RepairSegmentForSensor(driver, config);
+        return new RepairStar(driver, config);
+      }
+      case 'RepairCompleteStar': {
+        return new RepairCompleteStar(driver, config);
+      }
+      case 'RepairCartesian': {
+        // Return new RepairSwitchSet(driver, config);
+        return new RepairCartesian(driver, config);
       }
     }
     throw new Error(`No cases matched ${operationString}`);

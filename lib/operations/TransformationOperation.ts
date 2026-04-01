@@ -4,9 +4,9 @@ import { Operation } from './Operation';
 
 export class TransformationOperation extends Operation {
   public constructor(driver: Driver,
-    config: BenchmarkConfig,
-    queryString: string,
-    operationName: string) {
+                     config: BenchmarkConfig,
+                     queryString: string,
+                     operationName: string) {
     super(driver,
       config,
       true,

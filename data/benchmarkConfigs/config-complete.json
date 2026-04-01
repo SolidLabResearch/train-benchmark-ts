@@ -1,0 +1,289 @@
+{
+  "commonConfig": {
+    "randomSeed": "incremunica",
+    "baseResultPath": "/users/maavdnbr/incremunica-trainbench/results/resultsData/",
+    "baseConfigPath": "/users/maavdnbr/incremunica-trainbench/results/benchmarkConfigs/",
+    "baseIncremunicaConfigPath": "/users/maavdnbr/incremunica-trainbench/data/configs/"
+  },
+  "benchmarkConfigs": [
+    {
+      "matchTransformPercentage": 30,
+      "randomSeed": "incremunica",
+      "joinAlgorithm": [
+        "delta-query",
+        "computational-bind-join",
+        "memory-bind-join",
+        "nestedloop-join",
+        "partial-delete-hash-join",
+        "partial-match-hash-join",
+        "full-hash-join"
+      ],
+      "dataPath": [
+        "/users/maavdnbr/incremunica-trainbench/data/models/railway-batch-1-inferred.ttl",
+        "/users/maavdnbr/incremunica-trainbench/data/models/railway-batch-2-inferred.ttl",
+        "/users/maavdnbr/incremunica-trainbench/data/models/railway-batch-4-inferred.ttl"
+      ],
+      "operationStrings": [
+        [
+          "BatchCartesian2",
+          "InjectCartesian"
+        ],
+        [
+          "BatchCartesian2",
+          "RepairCartesian"
+        ],
+
+        [
+          "BatchCartesian3",
+          "InjectCartesian"
+        ],
+        [
+          "BatchCartesian3",
+          "RepairCartesian"
+        ],
+
+        [
+          "BatchCartesian4",
+          "InjectCartesian"
+        ],
+        [
+          "BatchCartesian4",
+          "RepairCartesian"
+        ]
+      ],
+      "numberOfTransforms": 5,
+      "numberOfRuns": 30
+    },
+
+    {
+      "matchTransformPercentage": 30,
+      "randomSeed": "incremunica",
+      "joinAlgorithm": [
+        "delta-query",
+        "computational-bind-join",
+        "memory-bind-join",
+        "nestedloop-join",
+        "partial-delete-hash-join",
+        "partial-match-hash-join",
+        "full-hash-join"
+      ],
+      "dataPath": [
+        "/users/maavdnbr/incremunica-trainbench/data/models/railway-batch-1-inferred.ttl",
+        "/users/maavdnbr/incremunica-trainbench/data/models/railway-batch-2-inferred.ttl",
+        "/users/maavdnbr/incremunica-trainbench/data/models/railway-batch-4-inferred.ttl",
+        "/users/maavdnbr/incremunica-trainbench/data/models/railway-batch-8-inferred.ttl"
+      ],
+      "operationStrings": [
+        [
+          "BatchChain2",
+          "InjectChain"
+        ],
+        [
+          "BatchChain2",
+          "RepairChain"
+        ],
+
+        [
+          "BatchChain4",
+          "InjectChain"
+        ],
+        [
+          "BatchChain4",
+          "RepairChain"
+        ],
+
+        [
+          "BatchChain6",
+          "InjectChain"
+        ],
+        [
+          "BatchChain6",
+          "RepairChain"
+        ],
+
+        [
+          "BatchChain8",
+          "InjectChain"
+        ],
+        [
+          "BatchChain8",
+          "RepairChain"
+        ]
+      ],
+      "numberOfTransforms": 5,
+      "numberOfRuns": 30
+    },
+
+    {
+      "matchTransformPercentage": 30,
+      "randomSeed": "incremunica",
+      "joinAlgorithm": [
+        "delta-query",
+        "computational-bind-join",
+        "memory-bind-join",
+        "nestedloop-join",
+        "partial-delete-hash-join",
+        "partial-match-hash-join",
+        "full-hash-join"
+      ],
+      "dataPath": [
+        "/users/maavdnbr/incremunica-trainbench/data/models/railway-batch-1-inferred.ttl",
+        "/users/maavdnbr/incremunica-trainbench/data/models/railway-batch-2-inferred.ttl",
+        "/users/maavdnbr/incremunica-trainbench/data/models/railway-batch-4-inferred.ttl",
+        "/users/maavdnbr/incremunica-trainbench/data/models/railway-batch-8-inferred.ttl"
+      ],
+      "operationStrings": [
+        [
+          "BatchStarLast2",
+          "InjectStar"
+        ],
+        [
+          "BatchStarLast2",
+          "RepairStar"
+        ],
+
+        [
+          "BatchStarLast4",
+          "InjectStar"
+        ],
+        [
+          "BatchStarLast4",
+          "RepairStar"
+        ],
+
+        [
+          "BatchStarLast6",
+          "InjectStar"
+        ],
+        [
+          "BatchStarLast6",
+          "RepairStar"
+        ],
+
+        [
+          "BatchStarLast8",
+          "InjectStar"
+        ],
+        [
+          "BatchStarLast8",
+          "RepairStar"
+        ]
+      ],
+      "numberOfTransforms": 5,
+      "numberOfRuns": 30
+    },
+
+    {
+      "matchTransformPercentage": 30,
+      "randomSeed": "incremunica",
+      "joinAlgorithm": [
+        "delta-query",
+        "computational-bind-join",
+        "memory-bind-join",
+        "nestedloop-join",
+        "partial-delete-hash-join",
+        "partial-match-hash-join",
+        "full-hash-join"
+      ],
+      "dataPath": [
+        "/users/maavdnbr/incremunica-trainbench/data/models/railway-batch-1-inferred.ttl",
+        "/users/maavdnbr/incremunica-trainbench/data/models/railway-batch-2-inferred.ttl",
+        "/users/maavdnbr/incremunica-trainbench/data/models/railway-batch-4-inferred.ttl",
+        "/users/maavdnbr/incremunica-trainbench/data/models/railway-batch-8-inferred.ttl"
+      ],
+      "operationStrings": [
+        [
+          "BatchStar2",
+          "InjectCompleteStar"
+        ],
+        [
+          "BatchStar2",
+          "RepairCompleteStar"
+        ],
+
+        [
+          "BatchStar4",
+          "InjectCompleteStar"
+        ],
+        [
+          "BatchStar4",
+          "RepairCompleteStar"
+        ],
+
+        [
+          "BatchStar6",
+          "InjectCompleteStar"
+        ],
+        [
+          "BatchStar6",
+          "RepairCompleteStar"
+        ],
+
+        [
+          "BatchStar8",
+          "InjectCompleteStar"
+        ],
+        [
+          "BatchStar8",
+          "RepairCompleteStar"
+        ]
+      ],
+      "numberOfTransforms": 5,
+      "numberOfRuns": 30
+    },
+
+    {
+      "matchTransformPercentage": 30,
+      "randomSeed": "incremunica",
+      "joinAlgorithm": [
+        "delta-query",
+        "computational-bind-join",
+        "memory-bind-join",
+        "nestedloop-join",
+        "partial-delete-hash-join",
+        "partial-match-hash-join",
+        "full-hash-join"
+      ],
+      "dataPath": [
+        "/users/maavdnbr/incremunica-trainbench/data/models/railway-batch-1-inferred.ttl",
+        "/users/maavdnbr/incremunica-trainbench/data/models/railway-batch-2-inferred.ttl",
+        "/users/maavdnbr/incremunica-trainbench/data/models/railway-batch-4-inferred.ttl",
+        "/users/maavdnbr/incremunica-trainbench/data/models/railway-batch-8-inferred.ttl"
+      ],
+      "operationStrings": [
+        [
+          "BatchConnectedSegments",
+          "InjectConnectedSegments",
+          "RepairConnectedSegments"
+        ],
+        [
+          "BatchPosLength",
+          "InjectPosLength",
+          "RepairPosLength"
+        ],
+        [
+          "BatchRouteSensor",
+          "InjectRouteSensor",
+          "RepairRouteSensor"
+        ],
+        [
+          "BatchSemaphoreNeighbor",
+          "InjectSemaphoreNeighbor",
+          "RepairSemaphoreNeighbor"
+        ],
+        [
+          "BatchSwitchMonitored",
+          "InjectSwitchMonitored",
+          "RepairSwitchMonitored"
+        ],
+        [
+          "BatchSwitchSet",
+          "InjectSwitchSet",
+          "RepairSwitchSet"
+        ]
+      ],
+      "numberOfTransforms": 5,
+      "numberOfRuns": 30
+    }
+  ]
+}

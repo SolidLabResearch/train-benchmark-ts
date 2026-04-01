@@ -1,6 +1,6 @@
 *
 !.gitignore
-!cachedResults
+cachedResults
 !cachedResults/*
 !configs
 !configs/*

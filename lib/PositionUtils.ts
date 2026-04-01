@@ -52,4 +52,3 @@ export class Position {
     return DataFactory.namedNode(`${BASE_PREFIX}POSITION_${this.toString()}`);
   }
 }
-

@@ -15,13 +15,12 @@ SELECT ?route ?sensor ?swP ?sw
 WHERE
 {
     ?route base:follows ?swP .
+    ?swP base:target ?sw .
+    ?sw base:monitoredBy ?sensor .
+    
     ?route rdf:type base:Route .
     ?swP rdf:type base:SwitchPosition .
-
-    ?swP base:target ?sw .
     ?sw rdf:type base:Switch .
-
-    ?sw base:monitoredBy ?sensor .
     ?sensor rdf:type base:Sensor .
 
     FILTER NOT EXISTS {
